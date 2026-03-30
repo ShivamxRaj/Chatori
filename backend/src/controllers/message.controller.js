@@ -27,6 +27,20 @@ export const getMessagesByUserId = async (req, res) => {
       ],
     });
 
+    // Mark all unread messages from this user to me as read
+    const unreadMessages = await Message.updateMany(
+      { senderId: userToChatId, receiverId: myId, read: false },
+      { read: true }
+    );
+
+    if (unreadMessages.modifiedCount > 0) {
+      const senderSocketId = getReceiverSocketId(userToChatId);
+      if (senderSocketId) {
+        // Tell the sender that we read their messages
+        io.to(senderSocketId).emit("messagesRead", { receiverId: myId });
+      }
+    }
+
     res.status(200).json(messages);
   } catch (error) {
     console.log("Error in getMessages controller: ", error.message);

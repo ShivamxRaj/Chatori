@@ -35,6 +35,21 @@ io.on("connection", (socket) => {
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
   // with socket.on we listen for events from clients
+  socket.on("markMessagesAsRead", async ({ senderId }) => {
+    try {
+      // Import Message model dynamically to avoid circular dependency
+      const Message = (await import("../models/Message.js")).default;
+      await Message.updateMany({ senderId, receiverId: userId, read: false }, { read: true });
+      
+      const senderSocketId = getReceiverSocketId(senderId);
+      if (senderSocketId) {
+        io.to(senderSocketId).emit("messagesRead", { receiverId: userId });
+      }
+    } catch (error) {
+      console.error("Error marking messages as read via socket:", error);
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log("A user disconnected", socket.user.fullName);
     delete userSocketMap[userId];

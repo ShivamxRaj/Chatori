@@ -1,12 +1,14 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import UsersLoadingSkeleton from "./UsersLoadingSkeleton";
 import NoChatsFound from "./NoChatsFound";
 import { useAuthStore } from "../store/useAuthStore";
+import { SearchIcon } from "lucide-react";
 
 function ChatsList() {
-  const { getMyChatPartners, chats, isUsersLoading, setSelectedUser } = useChatStore();
+  const { getMyChatPartners, chats, isUsersLoading, setSelectedUser, selectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     getMyChatPartners();
@@ -15,25 +17,58 @@ function ChatsList() {
   if (isUsersLoading) return <UsersLoadingSkeleton />;
   if (chats.length === 0) return <NoChatsFound />;
 
+  const filtered = chats.filter((c) =>
+    c.fullName.toLowerCase().includes(query.toLowerCase())
+  );
+
   return (
-    <>
-      {chats.map((chat) => (
-        <div
-          key={chat._id}
-          className="bg-cyan-500/10 p-4 rounded-lg cursor-pointer hover:bg-cyan-500/20 transition-colors"
-          onClick={() => setSelectedUser(chat)}
-        >
-          <div className="flex items-center gap-3">
-            <div className={`avatar ${onlineUsers.includes(chat._id) ? "online" : "offline"}`}>
-              <div className="size-12 rounded-full">
-                <img src={chat.profilePic || "/avatar.png"} alt={chat.fullName} />
+    <div className="flex flex-col gap-2">
+      {/* Search bar */}
+      <div className="relative mb-1">
+        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-500" />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search chats..."
+          className="w-full bg-white/5 border border-violet-500/10 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-300 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-violet-500 transition-all"
+        />
+      </div>
+
+      {filtered.length === 0 && (
+        <p className="text-center text-slate-500 text-sm py-4">No results found</p>
+      )}
+
+      {filtered.map((chat) => {
+        const isOnline = onlineUsers.includes(chat._id);
+        const isSelected = selectedUser?._id === chat._id;
+        return (
+          <div
+            key={chat._id}
+            onClick={() => setSelectedUser(chat)}
+            className={`p-3 rounded-xl cursor-pointer transition-all duration-200 border ${
+              isSelected
+                ? "bg-violet-600/20 border-violet-500/40"
+                : "border-transparent hover:bg-white/5 hover:border-violet-500/10"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`avatar ${isOnline ? "online" : "offline"}`}>
+                <div className={`size-11 rounded-full ring-2 transition-all ${isSelected ? "ring-violet-500/60" : "ring-violet-500/10"}`}>
+                  <img src={chat.profilePic || "/avatar.png"} alt={chat.fullName} className="rounded-full object-cover" />
+                </div>
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-slate-200 font-medium text-sm truncate">{chat.fullName}</h4>
+                <p className={`text-xs ${isOnline ? "text-emerald-400" : "text-slate-500"}`}>
+                  {isOnline ? "Online" : "Offline"}
+                </p>
               </div>
             </div>
-            <h4 className="text-slate-200 font-medium truncate">{chat.fullName}</h4>
           </div>
-        </div>
-      ))}
-    </>
+        );
+      })}
+    </div>
   );
 }
 export default ChatsList;

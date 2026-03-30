@@ -19,7 +19,9 @@ export const useAuthStore = create((set, get) => ({
       set({ authUser: res.data });
       get().connectSocket();
     } catch (error) {
-      console.log("Error in authCheck:", error);
+      if (error.response?.status !== 401) {
+        console.log("Error in authCheck:", error);
+      }
       set({ authUser: null });
     } finally {
       set({ isCheckingAuth: false });
@@ -85,6 +87,30 @@ export const useAuthStore = create((set, get) => ({
     } catch (error) {
       console.log("Error in update profile:", error);
       toast.error(error.response.data.message);
+    }
+  },
+
+  forgotPassword: async (email) => {
+    try {
+      const res = await axiosInstance.post("/auth/forgot-password", { email });
+      toast.success(res.data.message || "Reset link sent!");
+      return { success: true };
+    } catch (error) {
+      const message = error?.response?.data?.message || "Failed to send reset email.";
+      toast.error(message);
+      return { success: false };
+    }
+  },
+
+  resetPassword: async (token, password) => {
+    try {
+      const res = await axiosInstance.post(`/auth/reset-password/${token}`, { password });
+      toast.success(res.data.message || "Password reset successfully!");
+      return { success: true };
+    } catch (error) {
+      const message = error?.response?.data?.message || "Failed to reset password.";
+      toast.error(message);
+      return { success: false };
     }
   },
 

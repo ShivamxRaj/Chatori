@@ -1,0 +1,10 @@
+✦Aj WARN Arcjet will use 127.0.0.1 when missing public IP address in development mode
+Error sending welcome email: {
+  statusCode: 401,
+  name: 'validation_error',
+  message: 'API key is invalid'
+}
+Failed to send welcome email: Error: Failed to send welcome email
+    at sendWelcomeEmail (file:///D:/chat/chatify/backend/src/emails/emailHandlers.js:14:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signup (file:///D:/chat/chatify/backend/src/controllers/auth.controller.js:57:9)

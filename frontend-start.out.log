@@ -1,0 +1,24 @@
+
+  VITE v7.1.4  ready in 539 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://172.30.64.1:5173/
+  ➜  Network: http://192.168.31.70:5173/
+
+🌼   daisyUI 4.12.24
+├─ ✔︎ 2 themes added		https://daisyui.com/docs/themes
+╰─ ❤︎ Support daisyUI project:	https://opencollective.com/daisyui
+
+8:31:23 pm [vite] (client) hmr update /src/App.jsx, /src/index.css
+8:31:29 pm [vite] (client) hmr update /src/pages/ChatPage.jsx, /src/index.css
+8:33:54 pm [vite] (client) hmr update /src/App.jsx, /src/pages/ChatPage.jsx, /src/components/ChatsList.jsx, /src/components/ActiveTabSwitch.jsx, /src/components/ContactList.jsx, /src/components/ProfileHeader.jsx, /src/components/ChatContainer.jsx, /src/components/NoChatsFound.jsx, /src/components/ChatHeader.jsx, /src/components/MessageInput.jsx, /src/pages/SignUpPage.jsx, /src/pages/LoginPage.jsx, /src/index.css
+8:33:55 pm [vite] (client) hmr update /src/App.jsx, /src/index.css
+8:33:55 pm [vite] (client) hmr update /src/index.css, /src/components/BorderAnimatedContainer.jsx
+8:33:55 pm [vite] (client) hmr update /src/pages/ChatPage.jsx, /src/index.css
+8:33:55 pm [vite] (client) hmr update /src/index.css, /src/components/ChatHeader.jsx
+8:33:55 pm [vite] (client) hmr update /src/index.css
+
+🌼   daisyUI 4.12.24
+├─ ✔︎ 2 themes added		https://daisyui.com/docs/themes
+╰─ ★ Star daisyUI on GitHub	https://github.com/saadeghi/daisyui
+
