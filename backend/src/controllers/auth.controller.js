@@ -148,10 +148,12 @@ export const forgotPassword = async (req, res) => {
     // Always log the URL to console so it's usable in dev even if email fails
     console.log("\n🔐 Password Reset URL (dev fallback):", resetURL, "\n");
 
-    // Attempt to send email — failure is non-fatal
-    sendPasswordResetEmail(user.email, user.fullName, resetURL).catch((emailError) => {
+    // Attempt to send email
+    try {
+      await sendPasswordResetEmail(user.email, user.fullName, resetURL);
+    } catch (emailError) {
       console.error("⚠️  Failed to send reset email (email still saved in DB):", emailError.message);
-    });
+    }
 
     res.status(200).json({ message: "Password reset link sent to your email." });
   } catch (error) {
