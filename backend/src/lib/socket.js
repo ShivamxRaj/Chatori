@@ -50,6 +50,48 @@ io.on("connection", (socket) => {
     }
   });
 
+  // ----- CALL SIGNALING EVENTS -----
+
+  // 1. Initiate a call
+  socket.on("callUser", ({ userToCall, signalData, from, callerInfo }) => {
+    const receiverSocketId = getReceiverSocketId(userToCall);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("incomingCall", { signal: signalData, from, callerInfo });
+    }
+  });
+
+  // 2. Answer a call
+  socket.on("answerCall", (data) => {
+    const callerSocketId = getReceiverSocketId(data.to);
+    if (callerSocketId) {
+      io.to(callerSocketId).emit("callAccepted", data.signal);
+    }
+  });
+
+  // 3. Reject a call
+  socket.on("rejectCall", (data) => {
+    const callerSocketId = getReceiverSocketId(data.to);
+    if (callerSocketId) {
+      io.to(callerSocketId).emit("callRejected");
+    }
+  });
+
+  // 4. Send ICE Candidates
+  socket.on("iceCandidate", ({ to, candidate }) => {
+    const receiverSocketId = getReceiverSocketId(to);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("iceCandidate", candidate);
+    }
+  });
+
+  // 5. End Call
+  socket.on("endCall", ({ to }) => {
+    const receiverSocketId = getReceiverSocketId(to);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("callEnded");
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log("A user disconnected", socket.user.fullName);
     delete userSocketMap[userId];

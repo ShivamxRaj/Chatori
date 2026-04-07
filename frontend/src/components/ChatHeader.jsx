@@ -1,10 +1,12 @@
-import { XIcon } from "lucide-react";
+import { XIcon, PhoneIcon, VideoIcon } from "lucide-react";
 import { useChatStore } from "../store/useChatStore";
 import { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
+import { useCallStore } from "../store/useCallStore";
 
 function ChatHeader() {
   const { selectedUser, setSelectedUser } = useChatStore();
+  const { initiateCall } = useCallStore();
   const { onlineUsers } = useAuthStore();
   const isOnline = onlineUsers.includes(selectedUser._id);
 
@@ -41,13 +43,31 @@ function ChatHeader() {
         </div>
       </div>
 
-      <button
-        onClick={() => setSelectedUser(null)}
-        className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-violet-500/20 transition-all"
-        title="Close (Esc)"
-      >
-        <XIcon className="size-4" />
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => initiateCall(selectedUser, "audio")}
+          className="p-2 rounded-lg text-emerald-400 hover:text-white hover:bg-emerald-500/20 transition-all"
+          title="Voice Call"
+        >
+          <PhoneIcon className="size-4" />
+        </button>
+
+        <button
+          onClick={() => initiateCall(selectedUser, "video")}
+          className="p-2 rounded-lg text-emerald-400 hover:text-white hover:bg-emerald-500/20 transition-all mr-2"
+          title="Video Call"
+        >
+          <VideoIcon className="size-4" />
+        </button>
+
+        <button
+          onClick={() => setSelectedUser(null)}
+          className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-violet-500/20 transition-all"
+          title="Close (Esc)"
+        >
+          <XIcon className="size-4" />
+        </button>
+      </div>
     </div>
   );
 }

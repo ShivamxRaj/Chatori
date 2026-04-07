@@ -7,15 +7,26 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
 import PageLoader from "./components/PageLoader";
+import CallOverlay from "./components/CallOverlay";
+import { useCallStore } from "./store/useCallStore";
 
 import { Toaster } from "react-hot-toast";
 
 function App() {
-  const { checkAuth, isCheckingAuth, authUser } = useAuthStore();
+  const { checkAuth, isCheckingAuth, authUser, socket } = useAuthStore();
+  const { subscribeToCallEvents, unsubscribeFromCallEvents } = useCallStore();
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  useEffect(() => {
+    if (authUser && socket) {
+      subscribeToCallEvents();
+    } else {
+      unsubscribeFromCallEvents();
+    }
+  }, [authUser, socket, subscribeToCallEvents, unsubscribeFromCallEvents]);
 
   if (isCheckingAuth) return <PageLoader />;
 
@@ -45,6 +56,7 @@ function App() {
           },
         }}
       />
+      {authUser && <CallOverlay />}
     </div>
   );
 }
