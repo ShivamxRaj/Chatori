@@ -6,6 +6,8 @@ import { ENV } from "../lib/env.js";
 import cloudinary from "../lib/cloudinary.js";
 import crypto from "crypto";
 
+const isProduction = ENV.NODE_ENV !== "development";
+
 export const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
 
@@ -98,7 +100,12 @@ export const login = async (req, res) => {
 };
 
 export const logout = (_, res) => {
-  res.cookie("jwt", "", { maxAge: 0 });
+  res.cookie("jwt", "", {
+    maxAge: 0,
+    httpOnly: true,
+    sameSite: isProduction ? "none" : "strict",
+    secure: isProduction,
+  });
   res.status(200).json({ message: "Logged out successfully" });
 };
 
